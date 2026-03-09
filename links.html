@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MarkZ — Places to Be</title>
+  <meta name="description" content="All of MarkZ's online destinations in one place." />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --card-bg: #12121a;
+      --card-border: rgba(255,255,255,0.07);
+      --text: #f0f0f0;
+      --sub: #888;
+      --glow: rgba(120, 80, 255, 0.3);
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px 60px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Animated background orbs */
+    body::before, body::after {
+      content: '';
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      z-index: 0;
+      pointer-events: none;
+    }
+    body::before {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(100,60,255,0.15), transparent 70%);
+      top: -100px; left: -100px;
+      animation: float1 10s ease-in-out infinite;
+    }
+    body::after {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(0,200,255,0.12), transparent 70%);
+      bottom: 50px; right: -80px;
+      animation: float2 13s ease-in-out infinite;
+    }
+
+    @keyframes float1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(40px,30px)} }
+    @keyframes float2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-30px,-40px)} }
+
+    .container {
+      max-width: 560px;
+      width: 100%;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding-top: 10px;
+    }
+    .avatar {
+      width: 88px; height: 88px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #7c3aed, #06b6d4);
+      margin: 0 auto 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      box-shadow: 0 0 30px rgba(120,60,255,0.5);
+      animation: pulse 4s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{box-shadow:0 0 30px rgba(120,60,255,0.5)} 50%{box-shadow:0 0 50px rgba(120,60,255,0.8)} }
+    .name {
+      font-size: 1.9rem;
+      font-weight: 800;
+      background: linear-gradient(90deg, #a78bfa, #06b6d4, #a78bfa);
+      background-size: 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shimmer 4s linear infinite;
+    }
+    @keyframes shimmer { 0%{background-position:0%} 100%{background-position:200%} }
+    .tagline {
+      margin-top: 8px;
+      font-size: 0.9rem;
+      color: var(--sub);
+      font-weight: 400;
+      letter-spacing: 0.03em;
+    }
+
+    /* Divider */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+      margin: 10px 0 32px;
+    }
+
+    /* Section label */
+    .section-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--sub);
+      margin-bottom: 14px;
+      padding-left: 4px;
+    }
+
+    /* Link cards */
+    .links { display: flex; flex-direction: column; gap: 14px; margin-bottom: 32px; }
+
+    .link-card {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 18px 20px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      text-decoration: none;
+      color: var(--text);
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .link-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+      border-radius: 16px;
+    }
+    .link-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(255,255,255,0.15);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+    .link-card:hover::before { opacity: 1; }
+    .link-card:active { transform: translateY(0px); }
+
+    /* Platform-specific hover glows */
+    .card-x::before      { background: linear-gradient(135deg, rgba(29,161,242,0.08), transparent); }
+    .card-blog::before   { background: linear-gradient(135deg, rgba(255,107,53,0.08), transparent); }
+    .card-yt::before     { background: linear-gradient(135deg, rgba(255,0,0,0.08), transparent); }
+    .card-tt::before     { background: linear-gradient(135deg, rgba(0,242,234,0.08), transparent); }
+    .card-ai::before     { background: linear-gradient(135deg, rgba(0,212,255,0.1), transparent); }
+    .card-gi::before     { background: linear-gradient(135deg, rgba(255,193,7,0.1), transparent); }
+
+    .card-x:hover      { border-color: rgba(29,161,242,0.35); box-shadow: 0 8px 32px rgba(29,161,242,0.15); }
+    .card-blog:hover   { border-color: rgba(255,107,53,0.35); box-shadow: 0 8px 32px rgba(255,107,53,0.15); }
+    .card-yt:hover     { border-color: rgba(255,0,0,0.35); box-shadow: 0 8px 32px rgba(255,0,0,0.15); }
+    .card-tt:hover     { border-color: rgba(0,242,234,0.35); box-shadow: 0 8px 32px rgba(0,242,234,0.15); }
+    .card-ai:hover     { border-color: rgba(0,212,255,0.4); box-shadow: 0 8px 32px rgba(0,212,255,0.2); }
+    .card-gi:hover     { border-color: rgba(255,193,7,0.4); box-shadow: 0 8px 32px rgba(255,193,7,0.2); }
+
+    .icon-wrap {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+    .icon-x    { background: #000; border: 1px solid #333; }
+    .icon-blog { background: linear-gradient(135deg, #ff6b35, #f7931e); }
+    .icon-yt   { background: #ff0000; }
+    .icon-tt   { background: linear-gradient(135deg, #010101, #1a1a2e); border: 1px solid #333; }
+    .icon-ai   { background: linear-gradient(135deg, #0a0a2e, #003366); border: 1px solid rgba(0,212,255,0.3); }
+    .icon-gi   { background: linear-gradient(135deg, #1a3a1a, #2d5a27); border: 1px solid rgba(255,193,7,0.3); }
+
+    .card-text { flex: 1; min-width: 0; }
+    .card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .card-desc {
+      font-size: 0.78rem;
+      color: var(--sub);
+      margin-top: 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .arrow {
+      font-size: 1rem;
+      color: var(--sub);
+      flex-shrink: 0;
+      transition: transform 0.2s;
+    }
+    .link-card:hover .arrow { transform: translate(3px, -3px); color: #fff; }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      color: var(--sub);
+      font-size: 0.75rem;
+      margin-top: 16px;
+    }
+    .footer a { color: #7c3aed; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- Header -->
+    <div class="header">
+      <div class="avatar">⚡</div>
+      <div class="name">MarkZ</div>
+      <div class="tagline">Content Creator · AI Enthusiast · Football Fanatic</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Social & Content -->
+    <div class="section-label">📡 Follow &amp; Connect</div>
+    <div class="links">
+
+      <a href="https://x.com/ReplyGrowX" target="_blank" rel="noopener" class="link-card card-x">
+        <div class="icon-wrap icon-x">𝕏</div>
+        <div class="card-text">
+          <div class="card-title">ReplyGrowX on X</div>
+          <div class="card-desc">Tweets, threads &amp; real-time updates @ReplyGrowX</div>
+        </div>
+        <div class="arrow">↗</div>
+      </a>
+
+      <a href="https://www.youtube.com/@nuclearinbox3834" target="_blank" rel="noopener" class="link-card card-yt">
+        <div class="icon-wrap icon-yt">▶</div>
+        <div class="card-text">
+          <div class="card-title">Nuclear Inbox — YouTube</div>
+          <div class="card-desc">Videos, Shorts &amp; AI-powered content</div>
+        </div>
+        <div class="arrow">↗</div>
+      </a>
+
+      <a href="https://www.tiktok.com/@floordesignideas" target="_blank" rel="noopener" class="link-card card-tt">
+        <div class="icon-wrap icon-tt">🎵</div>
+        <div class="card-text">
+          <div class="card-title">Floor Design Ideas — TikTok</div>
+          <div class="card-desc">Epoxy floors · Room rebuilds · Transformations</div>
+        </div>
+        <div class="arrow">↗</div>
+      </a>
+
+    </div>
+
+    <!-- Newsletters & Resources -->
+    <div class="section-label">🧠 Newsletters &amp; Resources</div>
+    <div class="links">
+
+      <a href="https://replygrowx.com/" target="_blank" rel="noopener" class="link-card card-blog">
+        <div class="icon-wrap icon-blog">✍️</div>
+        <div class="card-text">
+          <div class="card-title">ReplyGrowX Blog</div>
+          <div class="card-desc">Marketing tips, growth strategies &amp; insights</div>
+        </div>
+        <div class="arrow">↗</div>
+      </a>
+
+      <a href="https://www.markzmarketing.com/aicorner" target="_blank" rel="noopener" class="link-card card-ai">
+        <div class="icon-wrap icon-ai">🤖</div>
+        <div class="card-text">
+          <div class="card-title">AI Corner Newsletter</div>
+          <div class="card-desc">Daily AI news · Tools · Automation · Delivered free</div>
+        </div>
+        <div class="arrow">↗</div>
+      </a>
+
+      <a href="https://www.markzmarketing.com/gridironnews" target="_blank" rel="noopener" class="link-card card-gi">
+        <div class="icon-wrap icon-gi">🏈</div>
+        <div class="card-text">
+          <div class="card-title">GridIron Intel</div>
+          <div class="card-desc">UFL · Arena · Semi-Pro American Football news</div>
+        </div>
+        <div class="arrow">↗</div>
+      </a>
+
+    </div>
+
+    <div class="divider"></div>
+    <div class="footer">© 2026 MarkZ · Built with ⚡ &amp; AI</div>
+  </div>
+</body>
+</html>
